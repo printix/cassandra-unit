@@ -14,7 +14,7 @@
 	<dependencies>
         <dependency>
             <groupId>org.cassandraunit</groupId>
-            <artifactId>cassandra-unit</artifactId>
+            <artifactId>cassandra-unit-jdk11</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
