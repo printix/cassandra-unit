@@ -6,7 +6,6 @@ import com.datastax.driver.core.Session;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.commitlog.CommitLog;
 import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.cassandra.io.util.FileUtils;
 import org.apache.cassandra.service.CassandraDaemon;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.transport.TTransportException;
@@ -22,9 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.ServerSocket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -292,10 +290,44 @@ public class EmbeddedCassandraServerHelper {
                 .forEach(CqlOperations.dropKeyspace(session));
     }
     
-    private static void rmdir(String dir) {
+    private static void rmdir(String dir) throws IOException {
         File dirFile = new File(dir);
         if (dirFile.exists()) {
-            FileUtils.deleteRecursive(dirFile);
+            Files.walkFileTree(dirFile.toPath(), new SimpleFileVisitor<Path>()
+            {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException
+                {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException
+                {
+                    // try to delete the file anyway, even if its attributes
+                    // could not be read, since delete-only access is
+                    // theoretically possible
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+                {
+                    if (exc == null)
+                    {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                    else
+                    {
+                        // directory iteration failed; propagate exception
+                        throw exc;
+                    }
+                }
+            });
         }
     }
 
@@ -322,7 +354,8 @@ public class EmbeddedCassandraServerHelper {
      * @throws IOException
      */
     private static void mkdir(String dir) {
-        FileUtils.createDirectory(dir);
+        new File(dir).mkdir();
+
     }
 
     private static void cleanupAndLeaveDirs() throws IOException {
@@ -333,7 +366,7 @@ public class EmbeddedCassandraServerHelper {
         commitLog.resetUnsafe(true); // cleanup screws w/ CommitLog, this brings it back to safe state
     }
 
-    private static void cleanup() {
+    private static void cleanup() throws IOException {
         // clean up commitlog and data directory which are stored as data directory/table/data files
         List<String> directories = new ArrayList<>(Arrays.asList(DatabaseDescriptor.getAllDataFileLocations()));
         directories.add(DatabaseDescriptor.getCommitLogLocation());
@@ -341,7 +374,7 @@ public class EmbeddedCassandraServerHelper {
             File dir = new File(dirName);
             if (!dir.exists())
                 throw new RuntimeException("No such directory: " + dir.getAbsolutePath());
-            FileUtils.deleteRecursive(dir);
+            rmdir(dirName);
         }
     }
 
@@ -404,4 +437,4 @@ public class EmbeddedCassandraServerHelper {
             return serverSocket.getLocalPort();
         }
     }
-}
+ }

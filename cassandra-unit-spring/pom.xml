@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.cassandraunit</groupId>
-		<artifactId>cassandra-unit-parent</artifactId>
+		<artifactId>cassandra-unit-parent-printix</artifactId>
         <version>3.5.0.2-SNAPSHOT</version>
 	</parent>
     <groupId>org.cassandraunit</groupId>
-	<artifactId>cassandra-unit-spring</artifactId>
+	<artifactId>cassandra-unit-spring-printix</artifactId>
 	<packaging>jar</packaging>
 	<name>cassandra-unit-spring</name>
 	<description>Spring Test framework to develop with Cassandra</description>
