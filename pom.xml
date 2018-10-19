@@ -2,11 +2,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.cassandraunit</groupId>
-    <artifactId>cassandra-unit-parent-printix</artifactId>
+    <artifactId>cassandra-unit-jdk11-parent</artifactId>
     <packaging>pom</packaging>
-    <name>cassandra-unit-parent-printix</name>
+    <name>cassandra-unit-jdk11-parent</name>
     <version>3.5.0.2-SNAPSHOT</version>
-    <description>Test framework to develop with Cassandra</description>
+    <description>Test framework to develop with Cassandra (printix fork, for jdk11)</description>
     <url>https://github.com/jsevellec/cassandra-unit</url>
     <licenses>
         <license>

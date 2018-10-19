@@ -2,11 +2,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.cassandraunit</groupId>
-        <artifactId>cassandra-unit-parent-printix</artifactId>
+        <artifactId>cassandra-unit-jdk11-parent</artifactId>
         <version>3.5.0.2-SNAPSHOT</version>
     </parent>
-    <artifactId>cassandra-unit-shaded-printix</artifactId>
-    <description>Shaded version of cassandra-unit</description>
+    <artifactId>cassandra-unit-shaded-jdk11</artifactId>
+    <description>Shaded version of cassandra-unit (printix fork, for jdk11)</description>
     <properties>
         <shade.prefix>org.cassandraunit.shaded</shade.prefix>
     </properties>
